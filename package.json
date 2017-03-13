@@ -1,7 +1,7 @@
 {
   "name": "spanbot",
   "version": "0.1.0",
-  "description": "",
+  "description": "Chatbot for translating Spanish to English and vice versa",
   "main": "app.js",
   "scripts": {
     "test": "test"
