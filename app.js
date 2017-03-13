@@ -14,6 +14,7 @@ token.val = "";
 token.time = 0;
 
 const tenMinutes = 600000;
+// const tenMinutes = 1000;      // For testing
 
 function timeForNewToken() {
     if(Date.now() - tenMinutes < token.time) {
@@ -40,22 +41,17 @@ function getTokenPromise() {
     });
 }
 
-
-function setToken(newToken) {
-    token = newToken;
-    return Promise.resolve();
-}
-
-/*
-function updateToken() {
+function updateTokenIfTime() {
     if (timeForNewToken()) {
-        getTokenPromise().then( (newToken) => {
-            setToken(newToken);
-
+        return getTokenPromise().then( (newToken) => {
+            token = newToken;
+            console.log("Token updated: " + newToken.val);
         });
     }
+    else {
+        return Promise.resolve();
+    }
 }
-*/
 
 function getLanguage (input) {
     var inputShort;
@@ -159,30 +155,17 @@ server.post('/api/messages', connector.listen());
 //=========================================================
 
 bot.dialog('/', (session) => {
-    //var tokenPromise;
-    if(timeForNewToken()) {
-        /*tokenPromise = getTokenPromise()
-                        .then( (newToken) => setToken(newToken),
-                               (error) => {console.log(error);} );*/
-        getTokenPromise()
-        .then(getLanguage(session.message.text))
-        .then(  (lang)   => translate(session.message.text, lang) )
-        .then(  (output) => session.send(output) )
-        .catch( (err)    => {
-            console.log(err);
-            /*
-            if(lang === undefined) {
-                session.send("I didn't understand what language you were speaking.");
-            }
-            */
-        } );
-    } else {
-        //tokenPromise = Promise.resolve();   // Dummy promise that always resolves
-
-        getLanguage(session.message.text)
-        .then(  (lang)   => translate(session.message.text, lang) )
-        .then(  (output) => session.send(output) )
-        .catch( (err)    => console.log(err) );
-    }
+    updateTokenIfTime()
+    .then(  ()       => getLanguage(session.message.text))
+    .then(  (lang)   => translate(session.message.text, lang) )
+    .then(  (output) => session.send(output) )
+    .catch( (err)    => {
+        console.log(err);
+        /*
+        if(lang === undefined) {
+            session.send("I didn't understand what language you were speaking.");
+        }
+        */
+    });
 
 });
