@@ -29,7 +29,7 @@ function getTokenPromise() {
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/jwt',
-                'Ocp-Apim-Subscription-Key': '835912f739fc4f2a85fada8682f7c800'     // FIXME: DON'T PUBLISH THIS KEY
+                'Ocp-Apim-Subscription-Key': process.env.OCP_APIM_SUBSCRIPTION_KEY
             }
         }, (error, response, body) => {
             if(error) {
@@ -46,6 +46,16 @@ function setToken(newToken) {
     return Promise.resolve();
 }
 
+/*
+function updateToken() {
+    if (timeForNewToken()) {
+        getTokenPromise().then( (newToken) => {
+            setToken(newToken);
+
+        });
+    }
+}
+*/
 
 function getLanguage (input) {
     var inputShort;
