@@ -1,0 +1,2 @@
+No personal information is collected or saved, except as specified in the Microsoft Cognitive Services Terms:
+https://www.microsoft.com/cognitive-services/en-us/legal/CognitiveServicesTerms20160804

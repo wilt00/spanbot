@@ -1,0 +1,2 @@
+This application makes use of the Microsoft Cognitive Services API. All usage of the application is in accordance with the Microsoft Cognitive Services Terms:
+https://www.microsoft.com/cognitive-services/en-us/legal/CognitiveServicesTerms20160804
