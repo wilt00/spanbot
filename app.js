@@ -53,7 +53,8 @@ function updateTokenIfTime() {
     }
 }
 
-function getLanguage (input) {
+function getLanguage (session) {
+    const input = session.message.text;
     var inputShort;
     if (input.length > 100) {
         inputShort = querystring.escape(input.substring(0, 100));
@@ -86,7 +87,8 @@ function getLanguage (input) {
 }
 
 
-function translate (input, language) {
+function translate (session, language) {
+    const input = session.message.text;
     return new Promise( (resolve, reject) => {
         var to;
         if(language === 'es') {
@@ -94,7 +96,9 @@ function translate (input, language) {
         } else if (language === 'en') {
             to = 'es';
         } else {
-            reject(new Error (language + " is not recognized as a valid language"));
+            to = 'en';
+            session.send("(I wasn't sure what language you were speaking just now, so I'm going to try translating your message into English)");
+            //reject(new Error (language + " is not recognized as a valid language"));
         }
         console.log("Translating from " + language + " to " + to);
 
@@ -106,6 +110,7 @@ function translate (input, language) {
             }
         }, (err, res, body) => {
             if(err) {
+                session.send("Sorry, I can't do any translation right now!");
                 reject(new Error('Unable to translate: ', err));
             }
             xml.parseString(body, {ignoreAttrs: true}, (err, result) => {
@@ -119,6 +124,13 @@ function translate (input, language) {
             })
         });
     });
+}
+
+
+function cleanAtMention(input) {
+    const index = input.search("<at>Spanbot</at>");
+    // TODO: Remove awkward "Spanbot" from translation text
+    // https://msdn.microsoft.com/en-us/microsoft-teams/botsconversation
 }
 
 
@@ -156,8 +168,8 @@ server.post('/api/messages', connector.listen());
 
 bot.dialog('/', (session) => {
     updateTokenIfTime()
-    .then(  ()       => getLanguage(session.message.text))
-    .then(  (lang)   => translate(session.message.text, lang) )
+    .then(  ()       => getLanguage(session))
+    .then(  (lang)   => translate(session, lang) )
     .then(  (output) => session.send(output) )
     .catch( (err)    => {
         console.log(err);
