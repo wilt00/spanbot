@@ -2,3 +2,5 @@ Dockerfile
 .eslintrc.json
 .vscode/*
 node_modules/*
+manifest.json
+sideload.zip
